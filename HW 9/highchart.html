@@ -1,0 +1,1439 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        
+        <meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		 
+		<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+		<script src="https://code.highcharts.com/stock/highstock.js"></script>
+		<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+		
+		
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+		<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+		
+	
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+		<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+		             
+		<script src="https://code.highcharts.com/modules/exporting.js"></script>
+		
+
+		<script src="https://code.highcharts.com/modules/series-label.js"></script>
+		
+		<script src="moment.js"></script>
+		<script src="moment-timezone-with-data.js"></script>
+		
+		
+		<!-- Angular Material style sheet -->
+		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+		 <!-- Angular Material requires Angular.js Libraries -->
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+
+		  <!-- Angular Material Library -->
+		<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+    </head>
+    <body>
+        
+    <div id="chart"> aaaaaa</div>
+
+
+
+	<DIV><input type="button" value="Say hello" onClick="showAndroidToast('Hello Android!')"/></DIV>
+        
+    <script>
+        
+		
+        // add j query
+        
+        var globalChartArray = new Array();
+        var	arrayDay=[];
+        var	arrayValue=[]; 
+        var	arrayVolume=[];
+				
+        var lengthOfDay = 0;
+        var priceMinimum = 0;
+        var priceMaximum =0;
+
+        var volMaximum=0;
+       
+        var globalTempPrice;
+        var globalTempChange;
+        var globalTempVolume;
+        var globalTempChangePercent;
+		
+		
+		
+
+		//	graph("MSFT", "histChart11");
+			graph(Android.getValue(), "histChart11");
+
+		
+		// text is company name
+
+	function showAndroidToast(toast) {
+        Android.showToast(toast);
+
+    }
+
+function graph(text, indicator) {
+
+document.getElementById("chart").innerHTML += "bbbb";
+
+	ajaxCallStockData(text, indicator);
+	
+
+	
+
+}		
+		
+		
+
+		
+        
+        function ajaxCallStockData(text, indicator) {
+        document.getElementById("chart").innerHTML += "cccc";
+
+		//document.getElementById('favorite').setAttribute("disabled","disabled");
+//        var text = "AAPL";
+            
+		$.ajax({
+			type: "GET",
+          //  url: "http://10.0.2.2/getStockData?input=" + text, // hardcode
+			url: "http://10.0.2.2:3000/getStockData?input=" + text, // hardcode
+            dataType: "json",
+		  	data: {'stockName': text}, 
+		  	
+			success: function (data) {
+			
+				
+				document.getElementById("chart").innerHTML += "ddddd";
+
+				var localData = data;
+				//$("#stock-table-name").html(localData['Meta Data']['2. Symbol']);
+                
+				
+				var lastRefreshedWithHours = localData['Meta Data']['3. Last Refreshed']; 
+				
+				var lastRefreshed = lastRefreshedWithHours.substring(0,10);
+				
+				
+				//$("#lastPrice").html(parseFloat(localData['Time Series (Daily)'][lastRefreshed]['4. close']).toFixed(2));
+				globalTempPrice = parseFloat(localData['Time Series (Daily)'][lastRefreshed]['4. close']).toFixed(2);
+				
+				var	arrayDayReverse = new Array(); 
+				var	arrayValueReverse = new Array(); 
+				var	arrayVolumeReverse = new Array(); 
+
+				var thisCounter=0;
+	 			var closeValOneDay=0;
+				var closeValTwoDay=0;
+				
+				var change=0;
+				var changePercent=0;
+				
+				for(var key in localData["Time Series (Daily)"]) {
+					 	// key is the dates in string
+                        thisCounter = thisCounter + 1;
+						
+						if (thisCounter == 1){
+							closeValOneDay = localData["Time Series (Daily)"][key]["4. close"];
+						}
+						if (thisCounter == 2){
+							closeValTwoDay = localData["Time Series (Daily)"][key]["4. close"];
+						}
+						
+						var date = new Date(key);
+						var monthTemp = (date.getMonth()+1);
+						
+						if (monthTemp < 10) {
+							monthTemp ='0'+monthTemp;
+						}
+						
+						var dayTemp = (date.getDate()+1);
+						if (dayTemp < 10) {
+							dayTemp ='0'+dayTemp;
+						}
+					
+					
+						var formattedDateString = (monthTemp) + '/' + (dayTemp);
+
+					 	arrayDayReverse.push(formattedDateString);
+	
+                       	arrayValueReverse.push(parseFloat(localData["Time Series (Daily)"][key]["4. close"]));
+					 	arrayVolumeReverse.push(parseFloat(localData["Time Series (Daily)"][key]["5. volume"]));
+						if (thisCounter > 120) {
+                        	break;
+						}
+                }
+				arrayDay = arrayDayReverse.reverse();
+                arrayValue = arrayValueReverse.reverse();
+                arrayVolume = arrayVolumeReverse.reverse();	
+				
+				
+				change = (closeValOneDay-closeValTwoDay);
+				changePercent = (change/closeValTwoDay)*100;
+				if (change<0) {
+					change = parseFloat(change).toFixed(2);
+					changePercent = parseFloat(changePercent).toFixed(2);
+				//	document.getElementById("change").style.color = "red";
+					//$("#change").html(change + " (" +  changePercent + "%)" + "<img src='http://cs-server.usc.edu:45678/hw/hw8/images/Down.png' width='13.5' height='13.5'/>"); 
+				}
+				else if(change>0)  {
+					change = parseFloat(change).toFixed(2);
+					changePercent = parseFloat(changePercent).toFixed(2);
+					//document.getElementById("change").style.color = "green";
+					//$("#change").html(change + " (" +  changePercent + "%)"+ "<img src='http://cs-server.usc.edu:45678/hw/hw8/images/Up.png' width='13.5' height='13.5'/>"); 
+					
+									 
+				}
+				else {
+					change = parseFloat(change).toFixed(2);
+					changePercent = parseFloat(changePercent).toFixed(2);
+					//$("#change").html(change + " (" +  changePercent + "%)"); 
+				}
+				globalTempChangePercent = changePercent;
+				globalTempChange = parseFloat(change).toFixed(2);
+				
+				today = new Date(lastRefreshed);
+				
+				var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+				var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+				
+				if (lastRefreshedWithHours.length <16) {
+					lastRefreshedWithHours = lastRefreshedWithHours + " 16:00:00";
+				}
+				
+				
+				//var dateTime = lastRefreshedWithHours+' '+moment(lastRefreshed).tz('America/New_York').format('z');
+			
+				
+			//	$("#timeStamp").html(dateTime); 
+				
+			//	$("#openPrice").html(parseFloat(localData['Time Series (Daily)'][lastRefreshed]['1. open']).toFixed(2)); 
+			//	$("#closePrice").html(parseFloat(localData['Time Series (Daily)'][lastRefreshed]['4. close']).toFixed(2)); 
+				
+				
+				var lowP = localData['Time Series (Daily)'][lastRefreshed]['3. low'];
+				var highP = localData['Time Series (Daily)'][lastRefreshed]['2. high'];
+				var range = lowP.toString() + "-" + highP.toString();
+				
+					
+				var lowPString = parseFloat(lowP).toFixed(2);
+				var highPString = parseFloat(highP).toFixed(2);
+					
+			//	$("#dayRange").html(lowPString + " - " + highPString);
+//				$("#volume").html(localData['Time Series (Daily)'][lastRefreshed]['5. volume'].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+				globalTempVolume = localData['Time Series (Daily)'][lastRefreshed]['5. volume'].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+				
+				lengthOfDay = arrayDay.length;
+				priceMinimum = Math.min.apply(null, arrayValue);
+				priceMaximum = Math.max.apply(null, arrayValue);
+				
+				volMaximum = Math.max.apply(null, arrayVolume) * 6;
+				
+				var temp = priceMaximum - priceMinimum;
+				priceMinimum = priceMinimum - 0.15 * temp;
+				priceMaximum = priceMaximum + 0.15 * temp;
+					
+				
+				if (indicator=="histChart11") {
+					histChart(text);
+				}
+				else if (indicator=="price"){       // doesnt work!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111
+					drawPriceGraph(text);
+				}
+				else if (indicator == "EMA"){
+					ajaxCallEMAData(text);
+				}
+				else if (indicator == "SMA"){
+					ajaxCallSMAData(text);
+				}
+				
+				else if (indicator == "STOCH"){
+					ajaxCallSTOCHData(text);
+				}
+				else if (indicator == "RSI"){
+					ajaxCallRSIData(text);
+				}
+				else if (indicator == "ADX"){
+					ajaxCallADXData(text);
+				}
+				else if (indicator == "CCI"){
+					ajaxCallCCIData(text);
+				}
+				else if (indicator == "BBANDS"){
+					ajaxCallBBANDSData(text);
+				}
+				else if (indicator == "MACD"){
+					ajaxCallMACDData(text);
+				}
+				
+				
+				
+				
+				
+				},
+					
+			error: function (xhr, status, error) {
+				console.log('Error: ' + error.message);
+				
+				
+			},
+		});
+		}
+        
+        
+        
+        
+        function histChart(text){
+//   			var text = "MSFT";
+			$.ajax({
+			type: "GET",
+            url: "http://10.0.2.2:3000/getStockData?input=" + text, //http://localhost:3000/getStockData?stockName=AA
+            dataType: "json",
+		  	data: {'stockName': text}, 
+		  	
+			success: function (data) {
+				
+			
+			
+					var localData = data;
+
+					var bigArray = new Array();
+
+					var lastRefreshedWithHours = localData['Meta Data']['3. Last Refreshed']; // "2017-11-08 15:28:09"
+					var dateTT = new Date(lastRefreshedWithHours);
+
+					var dateTemp;
+					if (dateTT.getDate()<10){
+						dateTemp = ("0" + (dateTT.getDate()+1)).slice(-2);
+					}
+
+					var dateTTString = (dateTT.getFullYear()+'-'+(dateTT.getMonth()+1) + '-' + dateTemp);
+
+					var lastRefreshed = dateTTString.toString();
+
+					var	arrayDayReverse = new Array(); 
+					var	arrayValueReverse = new Array(); 
+
+					var thisCounter=0;
+
+					for(var key in localData["Time Series (Daily)"]) {
+					 	
+						var smallArray = new Array();
+					
+						var date = new Date(key);
+						var dateInMiliSec = date.getTime();
+						var closePrice = parseFloat(localData["Time Series (Daily)"][key]["4. close"]);
+					
+						smallArray = [dateInMiliSec, closePrice];
+						bigArray[thisCounter] = smallArray;
+						var formattedDateString = (date.getMonth()+1) + '/' + (date.getDate()+1);
+					 	arrayDayReverse.push(formattedDateString);
+					 	
+						thisCounter = thisCounter + 1;
+						if (thisCounter > 1000) {
+                        	break;
+						}
+                	}
+					var arrayDay;
+
+					arrayDay = arrayDayReverse.reverse();
+					bigArray.reverse();	
+
+					var chart = Highcharts.stockChart('chart', {
+
+					chart: {
+						height: 400,
+						zoomType: 'x'
+					},
+
+					title: {
+						text: text + ' Stock Value'
+					},
+
+					subtitle: {
+							text: '<a class = "blueToBlack" href="https://www.alphavantage.co/" target="_blank">Source: Alpha Vantage</a>', 
+							useHTML: true
+					},
+					tooltip:{
+						split: false,
+						xDataFormat: '%A, %b, %e, %Y'
+					},
+					rangeSelector: {
+                      buttons:[
+                          {
+                              type: 'week',
+                              count: 1,
+                              text: '1w'
+                          },
+                          {
+                              type: 'month',
+                              count: 1,
+                              text: '1m'
+                          },
+                          {
+                              type: 'month',
+                              count: 3,
+                              text: '3m'
+                          },
+                          {
+                              type: 'month',
+                              count: 6,
+                              text: '6m'  
+                              
+                          },
+                          {
+                              type: 'ytd',
+                              text: 'YTD'
+                          },
+                          {
+                              type: 'year',
+                              count: 1,
+                              text: '1y'
+                          },
+                          {
+                              type: 'all',
+                              text: 'All'
+                          },
+                         
+                      ],
+                         selected: 0,
+                    },
+					yAxis: [ { 
+							min: 0,
+							title: {
+								text: 'Stock Value',
+								style: {
+									color: Highcharts.getOptions().colors[1],
+									fontSize: '10px'
+								}
+							},
+
+							}
+						],	
+					series: [{
+						data: bigArray,
+						type: 'area',
+						name: 'Price',
+						threshold: null,
+						tooltip: {
+							valueDecimals: 2
+						}
+					}]
+
+				});
+				
+	 		},
+			error: function (xhr, status, error) {
+				console.log('Error: ' + error.message);
+				},
+				  });
+	
+				   
+				   
+				   }
+				   
+				   	
+			
+			
+		
+		function ajaxCallSMAData(text) { 
+			
+			
+			var indicator = "SMA";
+			$.ajax({
+				type: "GET",
+				url: "http://10.0.2.2:3000/indicator?",  
+				dataType: "json",
+				data: {'stockName': text, 'idx': indicator}, // data mean the symbol that we input, only can send throguh json
+
+				success: function (data) {
+					
+					
+			
+					var localData = data;
+					
+					//document.write(JSON.stringify(localData));
+					var	arraySMAValue = new Array(); 
+					
+
+					var thisCounter=0;
+					
+
+					for(var key in localData["Technical Analysis: SMA"]) {
+							arraySMAValue.push(parseFloat(localData["Technical Analysis: SMA"][key]["SMA"]));
+							thisCounter = thisCounter + 1;
+							if(thisCounter >= arrayDay.length) {
+                                break;
+                            }
+					}
+					arraySMAValue.reverse();
+
+					globalChartArray[1] = {
+						chart: {
+							zoomType: 'xy'
+						},
+						title: {
+							text: 'Simple Moving Average (SMA)'
+						},
+						subtitle: {
+							text: '<a class = "blueToBlack" href="https://www.alphavantage.co/" target="_blank">Source: Alpha Vantage</a>', 
+							useHTML: true
+						},
+
+						xAxis: {
+							categories: arrayDay,
+							tickInterval: 5
+						},  
+
+						yAxis: [{   
+							labels: {
+								style: {
+									color: Highcharts.getOptions().colors[1],
+									fontSize: '8px'
+								}
+							},
+							tickAmount: 11,
+
+							title: {
+								style: {
+									color: Highcharts.getOptions().colors[1],
+									fontSize: '10px'
+								},
+								text: 'SMA'
+							}
+
+						}],
+						legend: {
+							align: 'center',
+							layout: 'horizontal',
+							itemStyle: {
+								fontSize:'10px' 
+							},
+							verticalAlign: 'bottom'
+						},
+						series: [{
+							color: 'red',
+							data: arraySMAValue,
+							lineWidth: 1,
+							threshold: null,
+							marker:{
+								enable: true,
+			//					symbol: 'square',
+								radius: 2
+							},
+							name: text
+						}]
+					};
+							
+						Highcharts.chart('chart', globalChartArray[1]);
+				
+				},
+			error: function (xhr, status, error) {
+				
+				console.log('Error: ' + error.message);
+				
+			},
+		});
+	}
+			
+			
+			
+		function ajaxCallEMAData(text) { 
+         
+			
+			var indicator = "EMA";
+			$.ajax({
+				type: "GET",
+
+					url: "http://10.0.2.2:3000/indicator?",  
+				dataType: "json",
+				data: {'stockName': text, 'idx': indicator}, // data mean the symbol that we input, only can send throguh json
+
+				success: function (data) {
+					
+			//		if(data["status"]) {
+					
+					//document.getElementById('SMA').innerHTML = "<div class='alert alert-danger' role='alert'><span class='sr-only'>Error:</span>Error! Failed to get SMA data.</div>";
+			//	}
+		
+					
+					var localData = data;
+					
+					//document.write(JSON.stringify(localData));
+					var	arrayEMAValue = new Array(); 
+					
+
+					var thisCounter=0;
+					
+
+					for(var key in localData["Technical Analysis: EMA"]) {
+							arrayEMAValue.push(parseFloat(localData["Technical Analysis: EMA"][key]["EMA"]));
+							thisCounter = thisCounter + 1;
+							if(thisCounter >= arrayDay.length) {
+                                break;
+                            }
+					}
+					arrayEMAValue.reverse();
+
+					globalChartArray[2] = {
+						chart: {
+							zoomType: 'xy'
+						},
+						title: {
+							text: 'Exponential Moving Average (EMA)'
+						},
+						subtitle: {
+							text: '<a class = "blueToBlack" href="https://www.alphavantage.co/" target="_blank">Source: Alpha Vantage</a>', 
+							useHTML: true
+						},
+
+						xAxis: {
+							categories: arrayDay,
+							tickInterval: 5
+						},  
+
+						yAxis: [{   
+							labels: {
+								style: {
+									color: Highcharts.getOptions().colors[1],
+									fontSize: '8px'
+								}
+							},
+							tickAmount: 11,
+
+							title: {
+								style: {
+									color: Highcharts.getOptions().colors[1],
+									fontSize: '10px'
+								},
+								text: 'EMA'
+							}
+
+						}],
+						legend: {
+							align: 'center',
+							layout: 'horizontal',
+							itemStyle: {
+								fontSize:'10px' 
+							},
+							verticalAlign: 'bottom'
+						},
+						series: [{
+							color: 'red',
+							data: arrayEMAValue,
+							lineWidth: 1,
+							threshold: null,
+							marker:{
+								enable: true,
+			//					symbol: 'square',
+								radius: 2
+							},
+							name: text // text
+						}]
+					};
+							
+						Highcharts.chart('chart', globalChartArray[2]);
+				
+				},
+			error: function (xhr, status, error) {
+				
+				console.log('Error: ' + error.message);
+				
+			},
+		});
+	}		
+			
+			
+		function ajaxCallSTOCHData(text) { 
+		
+			var indicator = "STOCH";
+			$.ajax({
+				type: "GET",
+                url: "http://10.0.2.2:3000/indicator?",  
+				
+				dataType: "json",
+				data: {'stockName': text, 'idx': indicator}, 
+				success: function (data) {
+					
+					
+				//	if(data["status"]) {
+						
+					
+				//	document.getElementById('STOCH').innerHTML = "<div class='alert alert-danger' role='alert'><span class='sr-only'>Error:</span>Error! Failed to get STOCH data.</div>";
+	//			}
+		//		else {
+					
+					
+					var localData = data;
+					var arraySTOCHValueD = new Array();
+                	var arraySTOCHValueK = new Array();
+					var thisCounter=0;
+					
+					for(var key in localData["Technical Analysis: STOCH"]){
+                            arraySTOCHValueD.push(parseFloat(localData["Technical Analysis: STOCH"][key]["SlowD"]));
+                            arraySTOCHValueK.push(parseFloat(localData["Technical Analysis: STOCH"][key]["SlowK"]));
+                            thisCounter = thisCounter + 1;
+                            if(thisCounter >= arrayDay.length){
+                                break;
+                            }
+                        }
+					arraySTOCHValueD.reverse();
+					arraySTOCHValueK.reverse();
+					
+					globalChartArray[3] = {
+						chart: {
+							zoomType: 'xy'
+						},
+						title: {
+							text: 'Stochastic Oscillator (STOCH)'
+						},
+						subtitle: {
+							text: '<a class = "blueToBlack" href="https://www.alphavantage.co/" target="_blank">Source: Alpha Vantage</a>', 
+							useHTML: true
+						},
+						xAxis: {
+							categories:arrayDay,
+							labels: {
+								style: {
+									fontSize: '9px'
+								}
+							},
+							tickInterval: 5  
+						},  
+						yAxis: [{   
+							labels: {
+								style: {
+									color: Highcharts.getOptions().colors[1],
+									fontSize: '8px'
+								}
+							},
+							tickAmount: 11,
+							title: {
+								text: 'STOCH',
+								style: {
+									color: Highcharts.getOptions().colors[1],
+									fontSize: '10px'
+								}
+							}
+						}],
+						legend: { 
+							align: 'center',
+							layout: 'horizontal',
+							itemStyle: {
+								fontSize:'10px' 
+							},
+							verticalAlign: 'bottom'
+
+						},
+						series: [
+							{
+							color: 'red',
+							data: arraySTOCHValueK,
+							lineWidth: 1,
+								threshold: null,
+							marker: {
+								enable: true,
+								radius: 2,
+					//			symbol: 'square'
+							},
+							name: text + "SlowK"
+
+						},{
+							color: '#9ec8ef',
+							data: arraySTOCHValueD,
+							lineWidth: 1,
+							marker: {
+								enable: true,
+					//			symbol: 'square',
+								radius: 2
+							},
+							name: text + "SlowD"  // text + "slowd"
+										}]
+									};
+					
+					Highcharts.chart('chart', globalChartArray[3]);
+			//	}
+								},
+					error: function (xhr, status, error) {
+						console.log('Error: ' + error.message);
+				},
+			});
+		}
+		
+		function ajaxCallRSIData(text) { 
+		//	var text = document.getElementsByName("text")[0].value;
+			var indicator = "RSI";
+			$.ajax({
+				type: "GET",
+				
+                
+				url: "http://10.0.2.2:3000/indicator?",  
+				dataType: "json",
+				data: {'stockName': text, 'idx': indicator}, 
+				success: function (data) {
+					
+//					if(data["status"]) {
+//					
+//					document.getElementById('RSI').innerHTML = "<div class='alert alert-danger' role='alert'><span class='sr-only'>Error:</span>Error! Failed to get RSI data.</div>";
+//				}
+				
+					
+					var localData = data;
+					var	arrayRSIValue = new Array(); 
+					var thisCounter=0;
+					for(var key in localData["Technical Analysis: RSI"]) {
+							arrayRSIValue.push(parseFloat(localData["Technical Analysis: RSI"][key]["RSI"]));
+							thisCounter = thisCounter + 1;
+							if(thisCounter >= arrayDay.length) {
+                                break;
+                            }
+					}
+					arrayRSIValue.reverse();
+					
+					globalChartArray[4] = {
+						chart: {
+							zoomType: 'xy'
+						},
+						title: {
+							text: 'Relative Strength Index (RSI)'
+						},
+						subtitle: {
+							text: '<a class = "blueToBlack" href="https://www.alphavantage.co/" target="_blank">Source: Alpha Vantage</a>', 
+							useHTML: true
+						},
+						xAxis: {
+							categories: arrayDay,
+							tickInterval: 5
+						},  
+						yAxis: [{   
+							labels: {
+								style: {
+									color: Highcharts.getOptions().colors[1],
+									fontSize: '8px'
+								}
+							},
+							tickAmount: 8,
+							title: {
+								text: 'RSI',
+								style: {
+									color: Highcharts.getOptions().colors[1],
+									fontSize: '10px'
+								}
+							}
+						}],
+						legend: { 
+							align: 'center',
+							layout: 'horizontal',
+							itemStyle: {
+								fontSize:'10px' 
+							},
+							verticalAlign: 'bottom'
+						},
+						series: [{
+							color: 'red',
+							name: text, // text
+							data: arrayRSIValue,
+							lineWidth: 1,
+							threshold: null,
+							marker:
+							{
+								enable: true,
+						//		symbol: 'square',
+								radius: 2
+							}
+							}]
+
+						};
+					
+					Highcharts.chart('chart', globalChartArray[4]);
+				
+									 },
+					error: function (xhr, status, error) {
+						console.log('Error: ' + error.message);
+					}
+			});
+		}
+			
+		function ajaxCallADXData(text) { 
+		//	var text = document.getElementsByName("text")[0].value;
+			var indicator = "ADX";
+			$.ajax({
+				type: "GET",
+				
+                
+				url: "http://10.0.2.2:3000/indicator?",  
+				dataType: "json",
+				data: {'stockName': text, 'idx': indicator}, 
+				success: function (data) {
+					
+//					if(data["status"]) {
+//					
+//					document.getElementById('ADX').innerHTML = "<div class='alert alert-danger' role='alert'><span class='sr-only'>Error:</span>Error! Failed to get ADX data.</div>";
+//				}
+			//	else {
+					
+					
+					var localData = data;
+					var	arrayADXValue = new Array(); 
+					var thisCounter=0;
+					for(var key in localData["Technical Analysis: ADX"]) {
+							arrayADXValue.push(parseFloat(localData["Technical Analysis: ADX"][key]["ADX"]));
+							thisCounter = thisCounter + 1;
+							if(thisCounter >= arrayDay.length) {
+                                break;
+                            }
+					}
+					arrayADXValue.reverse();
+										
+					globalChartArray[5]	=  {
+                chart: {
+                    zoomType: 'xy'
+                },
+                title: {
+                    text: 'Average Directional movement IndeX (ADX)'
+                },
+                subtitle: {
+                    text: '<a class = "blueToBlack" href="https://www.alphavantage.co/" target="_blank">Source: Alpha Vantage</a>', 
+					useHTML: true
+                },
+                xAxis: {
+                    categories: arrayDay,
+                    tickInterval: 5
+                },  
+                yAxis: [{   
+                    labels: {
+                        style: {
+                            color: Highcharts.getOptions().colors[1],
+                            fontSize: '8px'
+                        }
+                    },
+					tickAmount: 8,
+                    title: {
+                        text: 'ADX',
+                        style: {
+                            color: Highcharts.getOptions().colors[1],
+                            fontSize: '10px'
+                        }
+                    }
+                }],
+                legend: {
+                    align: 'center',
+							layout: 'horizontal',
+							itemStyle: {
+								fontSize:'10px' 
+							},
+							verticalAlign: 'bottom'
+                },
+                series: [{
+					color: 'red',
+					data: arrayADXValue,
+					threshold: null,
+                    name: text, // text
+                    lineWidth: 1,
+                    marker:{
+                        enable: true,
+                 
+                        radius: 2
+					}
+						}]
+					};	
+
+							
+						Highcharts.chart('chart', globalChartArray[5]);
+	//			}
+				},
+			error: function (xhr, status, error) {
+				
+				console.log('Error: ' + error.message);
+				
+			},
+		});
+	}
+			
+	function ajaxCallCCIData(text) { 
+		//	var text = document.getElementsByName("text")[0].value;
+			var indicator = "CCI";
+			$.ajax({
+				type: "GET",
+			
+                url: "http://10.0.2.2:3000/indicator?",
+				
+				dataType: "json",
+				data: {'stockName': text, 'idx': indicator}, 
+				success: function (data) {
+					
+//					if(data["status"]) {
+//						
+//					hhhh = true;
+//					
+//					document.getElementById('CCI').innerHTML = "<div class='alert alert-danger' role='alert'><span class='sr-only'>Error:</span>Error! Failed to get CCI data.</div>";
+//				}
+				//else {
+					
+					var localData = data;
+					var	arrayCCIValue = new Array(); 
+					var thisCounter=0;
+					for(var key in localData["Technical Analysis: CCI"]) {
+							arrayCCIValue.push(parseFloat(localData["Technical Analysis: CCI"][key]["CCI"]));
+							thisCounter = thisCounter + 1;
+							if(thisCounter >= arrayDay.length) {
+                                break;
+                            }
+					}
+					arrayCCIValue.reverse();
+
+							
+					globalChartArray[6] = {
+						chart: {
+							zoomType: 'xy'
+						},
+						title: {
+							text: 'Commodity Channel Index (CCI)'
+						},
+						subtitle: {
+							text: '<a class = "blueToBlack" href="https://www.alphavantage.co/" target="_blank">Source: Alpha Vantage</a>', 
+							useHTML: true
+						},
+						xAxis: {
+							categories: arrayDay,
+							tickInterval: 5
+						},  
+						yAxis: [{   
+							labels: {
+								style: {
+									color: Highcharts.getOptions().colors[1],
+									fontSize: '8px'
+								}
+							},
+							title: {
+								text: 'CCI',
+								style: {
+									color: Highcharts.getOptions().colors[1],
+									fontSize: '10px'
+								}
+							}
+						}],
+						legend: {
+							align: 'center',
+							layout: 'horizontal',
+							itemStyle: {
+								fontSize:'10px' 
+							},
+							verticalAlign: 'bottom'
+
+						},
+						series: [ {
+							color: 'red',
+							threshold: null,
+							data: arrayCCIValue,
+							name: text, // text
+							lineWidth: 1,
+							marker:{
+								enable: true,
+						//		symbol: 'square',
+								radius: 2
+							}
+							}]
+					};
+					
+					Highcharts.chart('chart', globalChartArray[6]);
+			//	}
+					},
+			error: function (xhr, status, error) {
+				
+				console.log('Error: ' + error.message);
+				
+			},
+		});
+	}	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	function ajaxCallBBANDSData(text) { 
+		//	var text = document.getElementsByName("text")[0].value;
+			var indicator = "BBANDS";
+			$.ajax({
+				type: "GET",
+                
+				url: "http://10.0.2.2:3000/indicator?",
+				
+				dataType: "json",
+				data: {'stockName': text, 'idx': indicator}, 
+				success: function (data) {
+					
+//					if(data["status"]) {
+//					
+//					document.getElementById('BBANDS').innerHTML = "<div class='alert alert-danger' role='alert'><span class='sr-only'>Error:</span>Error! Failed to get BBANDS data.</div>";
+//				}
+			//	else {
+					
+					var localData = data;
+					var arrayBBANDSValueLow = new Array();
+                	
+					var arrayBBANDSValueMiddle = new Array();
+					var arrayBBANDSValueHigh = new Array();
+					var thisCounter=0;
+					
+					for(var key in localData["Technical Analysis: BBANDS"]){
+							arrayBBANDSValueLow.push(parseFloat(localData["Technical Analysis: BBANDS"][key]["Real Lower Band"]));
+                            arrayBBANDSValueMiddle.push(parseFloat(localData["Technical Analysis: BBANDS"][key]["Real Middle Band"]));
+							arrayBBANDSValueHigh.push(parseFloat(localData["Technical Analysis: BBANDS"][key]["Real Upper Band"]));
+                            thisCounter = thisCounter + 1;
+                            if(thisCounter >= arrayDay.length){
+                                break;
+                            }
+                        }
+					arrayBBANDSValueLow.reverse();
+					arrayBBANDSValueMiddle.reverse();
+					arrayBBANDSValueHigh.reverse();
+					
+					
+					globalChartArray[7] =  {
+						chart: {
+                    zoomType: 'xy'
+                },
+                title: {
+                    text: 'Bollinger Bands (BBANDS)'
+                },
+                subtitle: {
+                    text: '<a class = "blueToBlack" href="https://www.alphavantage.co/" target="_blank">Source: Alpha Vantage</a>', 
+					useHTML: true
+                },
+                xAxis: {
+                    categories:arrayDay,
+                    labels: {
+                        style: {
+                            fontSize: '9px'
+                        }
+                    },
+                    tickInterval: 5  
+                },  
+                yAxis: [{   
+                    labels: {
+                        style: {
+                            color: Highcharts.getOptions().colors[1],
+                            fontSize: '8px'
+                        }
+                    },
+                    title: {
+                        text: 'BBANDS',
+                        style: {
+                            color: Highcharts.getOptions().colors[1],
+                            fontSize: '10px'
+                        }
+                    }
+                }], 
+                legend: { 
+					align: 'center',
+							layout: 'horizontal',
+							itemStyle: {
+								fontSize:'10px' 
+							},
+							verticalAlign: 'bottom'
+                },
+                series: [{
+					threshold: null,
+					color: 'red',
+					data: arrayBBANDSValueMiddle,
+                    name: text + "Real Middle Band", // text + "Real Middle Band",
+                    lineWidth:1,
+                    marker: {
+                        enable: true,
+                 //       symbol: 'square',
+                        radius: 2
+                    }
+                },{
+					threshold: null,
+					color: 'black',
+					data: arrayBBANDSValueHigh,
+                    name: text+ "Real Upper Band", // text + "Real Upper Band",
+                    lineWidth: 1,
+                    marker: {
+                        enable: true,
+             //           symbol: 'square',
+                        radius: 2
+                    }
+                },{
+					threshold: null,
+					color: '#02ff02',
+					data: arrayBBANDSValueLow,
+                    name: text + "Real Lower Band",  // text + "Real Lower Band"
+                    lineWidth: 1,
+                    marker: {
+                        enable: true,
+                 //       symbol: 'square',
+                        radius: 2
+					}
+										}]
+									};
+					
+					
+					Highcharts.chart('chart', globalChartArray[7]);
+		//		}
+								},
+					error: function (xhr, status, error) {
+						console.log('Error: ' + error.message);
+				},
+			});
+		}	
+		
+		function ajaxCallMACDData(text) { 
+		//	var text = document.getElementsByName("text")[0].value;
+			var indicator = "MACD";
+			$.ajax({
+				type: "GET",
+				 
+                
+				url: "http://10.0.2.2:3000/indicator?",
+				dataType: "json",
+				data: {'stockName': text, 'idx': indicator}, 
+				success: function (data) {
+					
+//					if(data["status"]) {
+//						
+//					
+//				}
+	//			else {
+					
+					var localData = data;
+					var arrayMACDValue = new Array();
+					var arrayMACDValueSignal = new Array();
+					var arrayMACDValueHist = new Array();
+				
+					var thisCounter=0;
+					
+					for(var key in localData["Technical Analysis: MACD"]){
+							arrayMACDValue.push(parseFloat(localData["Technical Analysis: MACD"][key]["MACD"]));
+                            arrayMACDValueSignal.push(parseFloat(localData["Technical Analysis: MACD"][key]["MACD_Signal"]));
+							arrayMACDValueHist.push(parseFloat(localData["Technical Analysis: MACD"][key]["MACD_Hist"]));
+                            thisCounter = thisCounter + 1;
+                            if(thisCounter >= arrayDay.length){
+                                break;
+                            }
+                        }
+					arrayMACDValue.reverse();
+					arrayMACDValueSignal.reverse();
+					arrayMACDValueHist.reverse();   
+					
+					
+					globalChartArray[8] = {
+						chart: {
+                    zoomType: 'xy'
+                },
+                title: {
+                    text: 'Moving Average Convergence/Divergence (MACD)'
+                },
+                subtitle: {
+                    text: '<a class = "blueToBlack" href="https://www.alphavantage.co/" target="_blank">Source: Alpha Vantage</a>', 
+					useHTML: true
+                },
+                xAxis: {
+                    categories:arrayDay,
+                    labels: {
+                        style: {
+                            fontSize: '9px'
+                        }
+                    },
+                    tickInterval: 5  
+                },  
+                yAxis: [{   
+                    labels: {
+                        style: {
+                            color: Highcharts.getOptions().colors[1],
+                            fontSize: '8px'
+                        }
+                    },
+                    title: {
+                        text: 'MACD',
+                        style: {
+                            color: Highcharts.getOptions().colors[1],
+                            fontSize: '10px'
+                        }
+                    }
+                }],
+                legend: { 
+					align: 'center',
+							layout: 'horizontal',
+							itemStyle: {
+								fontSize:'10px' 
+							},
+							verticalAlign: 'bottom'
+                    
+                },
+                series: [{
+					color: 'red',
+					data: arrayMACDValue,
+                    name: text + "MACD",   // text + "MACD"
+					threshold: null,
+                    lineWidth: 1,
+                    marker: {
+                        enable: true,
+              //          symbol: 'square',
+                        radius: 2
+                    }
+                    
+                },{
+					color: '#e6ad7c',
+					data: arrayMACDValueHist,
+					threshold: null,
+                    name: text + "MACD_Hist", // text + "MACD_Hist"
+					
+                    lineWidth: 1,
+                    marker: {
+                        enable: true,
+               //         symbol: 'square',
+                        radius: 2
+                    }
+                },{
+					color: '#9097df',
+					data: arrayMACDValueSignal,
+                    name: text + "MACD_Signal", //text + "MACD_Signal"
+					threshold: null,
+                    lineWidth: 1,
+                    marker: {
+                        enable: true,
+                //        symbol: 'square',
+                        radius: 2
+					}
+										}]
+									};
+					
+					Highcharts.chart('chart', globalChartArray[8] );
+					
+			//	}
+								},
+					error: function (xhr, status, error) {
+						console.log('Error: ' + error.message);
+				},
+			});
+		}	
+        
+        
+        function drawPriceGraph(text){
+		//	var text = document.getElementsByName("text")[0].value;
+			globalChartArray[0]= {
+					chart: {
+						type: 'area',
+						zoomType: 'x'
+					},
+					title: {
+						text: text+ ' Stock Price and Volume' // should be text + ' Stock Price and Volume'
+					},
+					subtitle: {
+						text: '<a class = "blueToBlack" href="https://www.alphavantage.co/" target="_blank">Source: Alpha Vantage</a>', 
+						useHTML: true
+					},
+                	"xAxis": {
+                        
+                        
+						categories:arrayDay,
+						labels: {
+                        	style: {
+                            	fontSize: '9px'
+                        	}
+                    	},
+						
+                    	tickInterval: 5
+                	},  
+                	yAxis: [ { 
+                    	labels: {
+							style: {
+								color: Highcharts.getOptions().colors[1],
+								fontSize: '8px'
+                        	}
+                    	},
+		//				min: 0,
+		//				max: priceMaximum,
+                    	title: {
+                        	text: 'Stock Price',
+                        	style: {
+								color: Highcharts.getOptions().colors[1],
+								fontSize: '10px'
+                        	}
+                    	},
+						tickAmount: 8
+                	}, { 
+                		labels: {
+                        	style: {
+                            	color: Highcharts.getOptions().colors[1],
+                            	fontSize: '8px'
+                        	}
+                		},
+                		title: {
+                    		text: 'Volume',
+                    		style: {
+                        		color: Highcharts.getOptions().colors[1],
+                        		fontSize: '10px'
+                    		}
+                		},
+        //        		min:0,
+        //        		max: volMaximum,
+						opposite: true,
+						tickAmount: 8
+            			}
+					],
+            
+            		legend: { 
+						align: 'center',
+							layout: 'horizontal',
+							itemStyle: {
+								fontSize:'10px' 
+							},
+							verticalAlign: 'bottom'
+            		},
+            		series: [ {
+						color: '#4042e5',
+                		data: arrayValue,
+                		fillOpacity:0.15,
+						name: 'Price',
+						threshold: null,
+                		tooltip: {
+                    		valueDecimals: 2
+                		}
+					}, {
+						color: 'red',
+						data: arrayVolume,
+						name: 'Volume',
+						type: 'column',
+						threshold: null,
+						yAxis: 1
+						
+            		}]
+        		};
+			
+			
+			Highcharts.chart('chart',  globalChartArray[0]);
+			
+			
+		}
+		
+         
+        
+        
+     
+        
+    </script>
+    </body>
+</html>
