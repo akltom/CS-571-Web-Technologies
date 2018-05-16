@@ -1,0 +1,148 @@
+<html>
+
+<p id="enter" class="theword" align="center" >Enter URL for Airlines List JSON File </p>
+<form name="myform" method="POST" id="location" align= "center">
+<input type="text" name="URL" class="box" style= "width:180px" auto value=""/>
+<br />
+   
+<input type="button" class="thebutton" id= "thebutton" name="submit" value="Submit Query" 
+onClick="viewJSON(this.form)" />
+</form>
+
+<body>
+
+<script type="text/javascript">
+var jsonObj;
+
+function viewJSON(what) {
+    var URL = what.URL.value;
+    if (URL == "") {
+        alert("Error Message: The text box is left empty!");
+        return false;
+    }
+    
+    function loadJSON(url) {
+        if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp=new XMLHttpRequest();
+        } 
+        else { // code for IE6, IE5
+            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP"); 
+        }
+        xmlhttp.open("GET",url,false);
+        try {
+            xmlhttp.send(); 
+            jsonObj = JSON.parse(xmlhttp.responseText);
+        }  
+        catch(err) {
+            alert("Error Message: The json file is invalid!");
+            return;
+        }
+        return jsonObj; 
+    }
+    
+    jsonObj = loadJSON(URL);
+    
+    if (!(jsonObj.hasOwnProperty("Mainline") )) {
+        alert("Error Message: The json file is empty!"); 
+    }
+    if (window.ActiveXObject) { //if IE, simply execute script (due to async prop). 
+        if (jsonObj.parseError.errorCode != 0) {
+            var myErr = jsonObj.parseError;
+            generateError(jsonObj);
+            hWin = window.open("", "Error", "height=300,width=340");
+            hWin.document.write(html_text);
+        } 
+        else { 
+            if(! ("Row" in jsonObj.Mainline.Table)) {
+			alert("Error Message: The json file contains no airlines!");
+ 				return;
+ 			}
+            generateHTML(jsonObj);
+            hWin = window.open("", "Assignment4", "height=800,width=1000");
+            hWin.document.write(html_text); 
+        }
+    } 
+    else { //else if FF, execute script once JSON object has loaded
+        if(!("Row" in jsonObj.Mainline.Table)) {
+			alert("Error Message: The json file contains no airlines!");
+ 				return;
+        }
+        jsonObj.onload=generateHTML(jsonObj);
+        hWin = window.open("", "Assignment4", "height=800,width=1000");
+        hWin.document.write(html_text);  
+    } 
+    hWin.document.close(); 
+}    
+
+function generateHTML(jsonObj) {
+    html_text="<html><title>US Airlines Listings</title> <body>";
+    html_text+= "<table border =" + "1" + "solid black>";
+    html_text+="<tr>";
+    
+    for (i=0; i<jsonObj.Mainline.Table.Header.Data.length; ++i) { 
+        html_text+= "<th>"+ jsonObj.Mainline.Table.Header.Data[i]+"</th>";  // will display all the topics
+    }
+    
+    html_text+="</tr>";
+    html_text+="<tr>";
+    for (i=0; i<jsonObj.Mainline.Table.Row.length; ++i) { 
+        
+        html_text+= "<td>" + "<p style=" + "text-align:left;>" + jsonObj.Mainline.Table.Row[i].Airline + "</p>"+"</td>"; 
+        html_text+= "<td>"+ "<p style=" + "text-align:left;>" + jsonObj.Mainline.Table.Row[i].IATA+"</p>" + "</td>";
+        html_text+= "<td>";
+        
+        html_text+= "<ul>";
+        html_text+= "<p style=" + "text-align:left;>";
+        html_text+= "<li>"+ "<strong>";
+        html_text+= jsonObj.Mainline.Table.Row[i].Hubs.Hub[0];
+        html_text+= "</strong>"+"</li>";
+        for (j=1; j<jsonObj.Mainline.Table.Row[i].Hubs.Hub.length; ++j) { 
+            html_text+= "<li>"; 
+            html_text+= jsonObj.Mainline.Table.Row[i].Hubs.Hub[j];
+            html_text+= "</li>"; 
+        }
+        html_text+= "</p>";
+        html_text+= "</ul>";
+        html_text+= "</td>";
+        
+        html_text+= "<td>"+ "<p style=" + "text-align:left;>" +jsonObj.Mainline.Table.Row[i].Notes+ "</p>" +"</td>";
+        html_text+= "<td>"+ "<p style=" + "text-align:left;>" + "<a href=" +jsonObj.Mainline.Table.Row[i].HomePage+ ">"+ jsonObj.Mainline.Table.Row[i].HomePage+ "</a>" + "</p>" + "</td>";  
+        
+        html_text+= "<td>"+ "<img src=" + jsonObj.Mainline.Table.Row[i].Plane + " height= 150px; width=200px;/>" +"</td>";   
+        html_text+="</tr>";
+        html_text+="<tr>";
+    }
+    html_text+="</tr>";
+    html_text+="</table>";
+    html_text+="</body>";
+    html_text+= "</html>";  
+}
+
+</script>
+</body>
+    
+<head>
+<style>
+.box {
+    display: block;
+    margin: 0 auto;
+} 
+.thebutton {
+    background-color: #caccce;
+    border: 1px solid grey;
+    border-radius: 3.93px;
+    color: black;
+    display: block;
+    height: 20px;
+    margin: 0 auto;
+}
+
+.theword {
+    font-weight: bold;
+    margin-top: 130px;
+    text-align: center;
+    font-size: 19px;
+}
+</style>
+</head>    
+</html>
