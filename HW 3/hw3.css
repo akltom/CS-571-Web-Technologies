@@ -1,0 +1,278 @@
+*{margin:0px; padding=0px;}
+    
+.blueline {
+    background-color:#004370;
+    height:5.2px;    
+}   
+    
+.whitebackground1 {
+    background-color:#f9f9f9;
+    height: 87.5px; 
+}
+    
+.logo {
+    position:absolute;
+    left: 65px;
+    top: 19.2px;
+}
+   
+.preferto {
+    position: absolute;
+    color:#0089d6;
+    text-align:right;
+    font-family:Helvetica;
+    top: 22px;
+    right: 262px;
+    font-weight:bolder;
+    font-size: 18px;
+}
+    
+.applynow {
+    position: absolute;
+    right: 76px;
+    top: 11px;
+}   
+
+.b:link {
+    
+}    
+    
+.b:visited {
+    
+}
+    
+.b:hover {
+    text-decoration: underline;
+}
+    
+.b:active{
+   
+}
+    
+    
+
+   
+.bluebackground {
+    background-color:#004370;
+    position: relative;
+    color:white;
+    text-align:center;
+    height:456.99px;  
+}
+    
+.bluebackgroundtext {
+    position: relative;
+    color:white;
+    font-family:Helvetica;
+    font-weight:bold;
+    text-align:center;
+    font-size: 60px;
+    top: 62px;
+}
+    
+.bluebackgroundtext2 {
+    position: relative;
+    color:white;
+    font-family:Helvetica;
+    text-align:center;
+    font-size: 36px;
+    padding-top: 102px;
+}   
+    
+.twolinks {
+    text-align:center; 
+    border:none;
+    position: relative;
+    left: 55px;
+    top: 40px;
+    font-family:Helvetica;
+}
+    
+.td {
+    position: relative;
+    left: 327px;
+    top: 3px;
+    width: 200%;
+    height:100px;
+}  
+    
+.tr {
+    valign: top;
+    position: relative;
+}
+    
+.whitebackground {
+    background-color:#ffffff;
+    text-align:center;
+    position: relative;
+    height: 603px;
+}
+    
+.whymillions {
+    position: relative;
+    color:#0089d6;
+    clear:both;
+    text-align:center;
+    font-size: 48px;
+    font-weight:bolder;
+    font-family:Helvetica;
+    
+}
+    
+.clicktable1 {
+    margin-top: 60px;   
+    position:relative;
+    top:29px;
+}  
+    
+
+    
+.biggertext1 {
+    color:black;
+    font-size: 24px;
+    font-weight: normal;
+    position: relative;
+    margin-top: -48px;
+    font-family:Helvetica;
+    line-height: 0.995;
+    
+}
+    
+.biggertext2 {
+    color:black;
+    font-size: 24px;
+    font-weight: normal;
+    position: relative;
+    margin-top: -18px;
+    font-family:Helvetica;
+    line-height: 1.05;
+}
+
+    
+.biggertext {
+    color:black;
+    font-size: 24px;
+    font-weight: normal;
+    position: relative;
+    font-family:Helvetica;
+     line-height: 0.995;
+}
+    
+.smallertext {
+    color:black;
+    font-size: 18px;
+    position: relative;
+    font-family:Helvetica;
+    line-height: 1.4;
+    font-weight: lighter;
+}
+    
+.finaltext {
+    color:black;
+    font-size: 18px;
+    floot: left;
+    position: relative;
+    
+}
+    
+.lightblue {
+    background-color: #0073b4;
+    height: 12px;
+    position: relative;
+}
+    
+.darkblue {
+    background-color: #004370;
+    height: 105px;
+    position: relative;
+}
+    
+    
+span.point {
+    font-weight: bolder;
+    color: #0073b4;
+    font-size: 3px;
+    position: relative;
+    
+    bottom:20px;
+    left: 60px;
+    font-family: serif; 
+}
+    
+.disclosures {
+    color:white;
+    position: relative;
+    top: 11px;
+    left: 78px;
+    font-size: 16px;
+    font-family:Helvetica;
+}
+    
+hr {
+    display: block;
+    position: absolute;
+    height: 1px;
+    border: none;
+    top: 18.6px;
+    
+    border-top: 1px solid #0073b4;
+    margin: 1em 0;
+    padding: 0;
+    width:940px;
+    
+}
+    
+#down {
+    color:white;
+    font-size: 12.25px;
+    top: 15px;
+    position: relative;
+    left: 65px;
+    font-family:Helvetica;
+}
+    
+.button {
+    background-color: #c41139;
+    border: none;
+    color: white;
+    padding: 11px 33px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 19.88px;
+    font-weight: bold;
+    margin: 9.5px 2px;
+    
+    border-radius: 4px;
+    
+    border: 1px solid #c41139;
+    
+    box-shadow: 0px 0px 5px 0.5px #ffffff inset;
+    
+    font-family:Helvetica;
+    
+    cursor: pointer;
+    
+}
+    
+.button:hover {
+    background-color:#b4133b; 
+}    
+#up{
+    border-bottom: 1.65px solid  #0073b4;
+    height:60px;
+    margin-left:65px;
+    margin-right:40px;
+    position:relative;
+    top:-2px;
+}
+
+.b{
+    color:white;
+    position: relative;
+    bottom:2px;
+    font-size: 16px;
+    left: 66px;
+    font-family:Helvetica;  
+    text-decoration: none;
+}
